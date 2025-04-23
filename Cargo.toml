@@ -24,3 +24,6 @@ tabled = { version = "0.18", features = ["derive", "ansi"] }
 [[bin]]
 name = "pkgsite"
 path = "src/main.rs"
+
+[workspace]
+members = ["pkgsite-lib"]
