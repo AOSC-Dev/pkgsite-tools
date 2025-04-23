@@ -1,12 +1,19 @@
 use anyhow::Result;
-use console::{Alignment, measure_text_width, pad_str, style};
+use console::{measure_text_width, pad_str, style, Alignment};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-use time::{UtcDateTime, format_description};
+use time::{format_description, UtcDateTime};
 
 use pkgsite_tools::{PACKAGES_SITE_URL, PADDING};
 
-const REPOSITORY_HEADERS: [&str; 5] = ["Repository", "Count", "Ghost", "Lagging", "Missing"];
+const REPOSITORY_HEADERS: [&str; 6] = [
+    "Repository",
+    "Count",
+    "Ghost",
+    "Lagging",
+    "Missing",
+    "Last Update (UTC)",
+];
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Repo {
@@ -73,6 +80,7 @@ impl Display for Index {
             .fold(
                 REPOSITORY_HEADERS
                     .iter()
+                    .take(5)
                     .map(|s| measure_text_width(*s))
                     .collect::<Vec<usize>>(),
                 |acc, x| {
@@ -126,36 +134,36 @@ Repositories:
                 .collect::<Vec<String>>()
                 .join("\n"),
             pad_str(
-                "Repository",
+                REPOSITORY_HEADERS[0],
                 max_repo_properties_widths[0] + PADDING,
                 Alignment::Left,
                 None
             ),
             pad_str(
-                "Count",
+                REPOSITORY_HEADERS[1],
                 max_repo_properties_widths[1] + PADDING,
                 Alignment::Left,
                 None
             ),
             pad_str(
-                "Ghost",
+                REPOSITORY_HEADERS[2],
                 max_repo_properties_widths[2] + PADDING,
                 Alignment::Left,
                 None
             ),
             pad_str(
-                "Lagging",
+                REPOSITORY_HEADERS[3],
                 max_repo_properties_widths[3] + PADDING,
                 Alignment::Left,
                 None
             ),
             pad_str(
-                "Missing",
+                REPOSITORY_HEADERS[4],
                 max_repo_properties_widths[4] + PADDING,
                 Alignment::Left,
                 None
             ),
-            "Last Update (UTC)",
+            REPOSITORY_HEADERS[5],
             &self
                 .repo_categories
                 .first()
