@@ -1,8 +1,12 @@
 use anyhow::Result;
-use console::{Alignment, measure_text_width, pad_str, style};
+use console::style;
 use reqwest;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
+use tabled::{
+    builder::Builder,
+    settings::{Alignment, Modify, Padding, Settings, Style, object::SegmentAll},
+};
 
 use pkgsite_tools::{PACKAGES_SITE_URL, PADDING};
 
@@ -27,6 +31,12 @@ impl Display for PackageError {
 #[derive(Debug, Serialize, Deserialize)]
 struct DpkgMeta {
     hasmeta: bool,
+}
+
+impl Display for DpkgMeta {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", if self.hasmeta { '✓' } else { 'x' })
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -77,18 +87,38 @@ impl Info {
 
 impl Display for Info {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let max_repo_width = &self
-            .version_matrix
-            .iter()
-            .map(|m| measure_text_width(&m.repo))
-            .max()
-            .unwrap_or(10);
+        let mut version_matrix = Builder::default();
+        version_matrix.push_record(
+            vec!["Version".to_owned()].into_iter().chain(
+                self.versions
+                    .iter()
+                    .map(|ver| {
+                        let italic_version = style(&ver.version).italic().to_string();
+                        if ver.testing {
+                            italic_version
+                        } else {
+                            ver.version.clone()
+                        }
+                    })
+                    .collect::<Vec<String>>(),
+            ),
+        );
+        for row in &self.version_matrix {
+            version_matrix.push_record(
+                vec![row.repo.clone()].into_iter().chain(
+                    row.meta
+                        .iter()
+                        .map(|meta| meta.to_string())
+                        .collect::<Vec<String>>(),
+                ),
+            );
+        }
 
-        let ver_width = [
-            &self.versions.first().map(|v| v.version.len()).unwrap_or(10),
-            &self.versions.get(1).map(|v| v.version.len()).unwrap_or(10),
-            &self.versions.get(2).map(|v| v.version.len()).unwrap_or(10),
-        ];
+        let table_settings = Settings::default().with(Style::blank()).with(
+            Modify::new(SegmentAll)
+                .with(Alignment::left())
+                .with(Padding::new(0, PADDING, 0, 0)),
+        );
 
         write!(
             f,
@@ -100,7 +130,6 @@ Upstream: {}
 Source: ({}) {}{}
 
 Available versions:
-{}{}
 {}
 {}",
             &self.name,
@@ -125,56 +154,7 @@ Available versions:
                         .join("\n")
                 )
             },
-            pad_str("Version", max_repo_width + PADDING, Alignment::Left, None),
-            &self
-                .versions
-                .iter()
-                .take(3)
-                .fold(String::new(), |acc, version| {
-                    let italic_version = style(&version.version).italic().to_string();
-                    acc + &pad_str(
-                        if version.testing {
-                            &italic_version
-                        } else {
-                            &version.version
-                        },
-                        version.version.len() + PADDING,
-                        Alignment::Left,
-                        None,
-                    )
-                }),
-            &self
-                .version_matrix
-                .iter()
-                .map(|repo| {
-                    format!(
-                        "{}{}",
-                        &pad_str(&repo.repo, max_repo_width + PADDING, Alignment::Left, None)
-                            .to_string(),
-                        &repo.meta.iter().take(3).enumerate().fold(
-                            String::new(),
-                            |acc, (idx, meta)| {
-                                if meta.hasmeta {
-                                    acc + &pad_str(
-                                        "✓",
-                                        *ver_width[idx] + PADDING,
-                                        Alignment::Left,
-                                        None,
-                                    )
-                                } else {
-                                    acc + &pad_str(
-                                        "x",
-                                        *ver_width[idx] + PADDING,
-                                        Alignment::Left,
-                                        None,
-                                    )
-                                }
-                            },
-                        )
-                    )
-                })
-                .collect::<Vec<String>>()
-                .join("\n"),
+            version_matrix.build().with(table_settings),
             if self.versions.iter().any(|version| version.testing) {
                 format!(
                     "\nNOTE: {} versions are italicized.",

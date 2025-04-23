@@ -1,8 +1,12 @@
 use anyhow::Result;
-use console::{measure_text_width, pad_str, style, Alignment};
+use console::style;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-use time::{format_description, UtcDateTime};
+use tabled::{
+    builder::Builder,
+    settings::{Alignment, Modify, Padding, Settings, Style, object::SegmentAll},
+};
+use time::{UtcDateTime, format_description};
 
 use pkgsite_tools::{PACKAGES_SITE_URL, PADDING};
 
@@ -51,48 +55,51 @@ impl Index {
 
 impl Display for Index {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let max_pkgname_width = &self
-            .updates
-            .iter()
-            .map(|pkg| measure_text_width(&pkg.name))
-            .max()
-            .unwrap_or(10);
-        let max_version_width = &self
-            .updates
-            .iter()
-            .map(|pkg| measure_text_width(&pkg.full_version))
-            .max()
-            .unwrap_or(10);
-
         let (_, repositories) = &self.repo_categories.first().unwrap();
 
-        let max_repo_properties_widths = repositories
-            .iter()
-            .map(|repo| {
-                [
-                    measure_text_width(&repo.realname),
-                    measure_text_width(&repo.pkgcount.to_string()),
-                    measure_text_width(&repo.ghost.to_string()),
-                    measure_text_width(&repo.lagging.to_string()),
-                    measure_text_width(&repo.missing.to_string()),
-                ]
-            })
-            .fold(
-                REPOSITORY_HEADERS
-                    .iter()
-                    .take(5)
-                    .map(|s| measure_text_width(*s))
-                    .collect::<Vec<usize>>(),
-                |acc, x| {
-                    vec![
-                        acc[0].max(x[0]),
-                        acc[1].max(x[1]),
-                        acc[2].max(x[2]),
-                        acc[3].max(x[3]),
-                        acc[4].max(x[4]),
-                    ]
+        let mut updates_table = Builder::default();
+        for package in &self.updates {
+            let italic_version = style(&package.full_version).italic().to_string();
+            updates_table.push_record([
+                &package.name,
+                if package.status == 1 {
+                    &italic_version
+                } else {
+                    &package.full_version
                 },
-            );
+                &package.description,
+            ]);
+        }
+
+        let mut repositories_table = Builder::default();
+        repositories_table.push_record(REPOSITORY_HEADERS);
+        for repository in repositories {
+            repositories_table.push_record([
+                &repository.realname,
+                &repository.pkgcount.to_string(),
+                &repository.ghost.to_string(),
+                &repository.lagging.to_string(),
+                &repository.missing.to_string(),
+                &UtcDateTime::from_unix_timestamp(repository.date.into())
+                    .unwrap_or(UtcDateTime::UNIX_EPOCH)
+                    .format(
+                        &format_description::parse("[year]-[month]-[day] [hour]:[minute]").unwrap(),
+                    )
+                    .unwrap_or(repository.date.to_string()),
+            ]);
+        }
+
+        let updates_table_settings = Settings::default().with(Style::blank()).with(
+            Modify::new(SegmentAll)
+                .with(Alignment::left())
+                .with(Padding::new(0, PADDING, 0, 0)),
+        );
+
+        let repositories_table_settings = Settings::default().with(Style::blank()).with(
+            Modify::new(SegmentAll)
+                .with(Alignment::left())
+                .with(Padding::new(0, PADDING, 0, 0)),
+        );
 
         write!(
             f,
@@ -102,119 +109,10 @@ Latest Source Updates:
 {}
 
 Repositories:
-{}{}{}{}{}{}
 {}",
             &self.total,
-            &self
-                .updates
-                .iter()
-                .map(|pkg| {
-                    let italic_version = style(&pkg.full_version).italic().to_string();
-                    format!(
-                        "{}{}{}",
-                        pad_str(
-                            &pkg.name,
-                            max_pkgname_width + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        pad_str(
-                            if pkg.status == 1 {
-                                &italic_version
-                            } else {
-                                &pkg.full_version
-                            },
-                            max_version_width + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        &pkg.description,
-                    )
-                })
-                .collect::<Vec<String>>()
-                .join("\n"),
-            pad_str(
-                REPOSITORY_HEADERS[0],
-                max_repo_properties_widths[0] + PADDING,
-                Alignment::Left,
-                None
-            ),
-            pad_str(
-                REPOSITORY_HEADERS[1],
-                max_repo_properties_widths[1] + PADDING,
-                Alignment::Left,
-                None
-            ),
-            pad_str(
-                REPOSITORY_HEADERS[2],
-                max_repo_properties_widths[2] + PADDING,
-                Alignment::Left,
-                None
-            ),
-            pad_str(
-                REPOSITORY_HEADERS[3],
-                max_repo_properties_widths[3] + PADDING,
-                Alignment::Left,
-                None
-            ),
-            pad_str(
-                REPOSITORY_HEADERS[4],
-                max_repo_properties_widths[4] + PADDING,
-                Alignment::Left,
-                None
-            ),
-            REPOSITORY_HEADERS[5],
-            &self
-                .repo_categories
-                .first()
-                .unwrap()
-                .1
-                .iter()
-                .map(|repo| {
-                    let datetime = UtcDateTime::from_unix_timestamp(repo.date.into())
-                        .unwrap()
-                        .format(
-                            &format_description::parse("[year]-[month]-[day] [hour]:[minute]")
-                                .unwrap(),
-                        )
-                        .unwrap_or(repo.date.to_string());
-                    format!(
-                        "{}{}{}{}{}{}",
-                        pad_str(
-                            &repo.realname,
-                            max_repo_properties_widths[0] + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        pad_str(
-                            &repo.pkgcount.to_string(),
-                            max_repo_properties_widths[1] + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        pad_str(
-                            &repo.ghost.to_string(),
-                            max_repo_properties_widths[2] + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        pad_str(
-                            &repo.lagging.to_string(),
-                            max_repo_properties_widths[3] + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        pad_str(
-                            &repo.missing.to_string(),
-                            max_repo_properties_widths[4] + PADDING,
-                            Alignment::Left,
-                            None
-                        ),
-                        datetime
-                    )
-                })
-                .collect::<Vec<String>>()
-                .join("\n")
+            updates_table.build().with(updates_table_settings),
+            repositories_table.build().with(repositories_table_settings),
         )
     }
 }

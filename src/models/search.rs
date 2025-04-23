@@ -1,9 +1,13 @@
 use anyhow::{Result, bail};
-use console::{Alignment, measure_text_width, pad_str, style};
+use console::style;
 use regex::{Captures, Regex};
 use reqwest::{Client, StatusCode, redirect::Policy};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
+use tabled::{
+    builder::Builder,
+    settings::{Alignment, Modify, Padding, Settings, Style, object::SegmentAll},
+};
 
 use pkgsite_tools::{PACKAGES_SITE_URL, PADDING};
 
@@ -81,41 +85,22 @@ impl Display for Search {
             })
             .collect::<Vec<Package>>();
 
-        let max_pkgname_width = packages
-            .iter()
-            .map(|pkg| measure_text_width(&pkg.name_highlight))
-            .max()
-            .unwrap_or(10);
-        let max_version_width = packages
-            .iter()
-            .map(|pkg| measure_text_width(&pkg.full_version))
-            .max()
-            .unwrap_or(10);
+        let mut packages_table = Builder::default();
+        for package in packages {
+            packages_table.push_record([
+                &package.name_highlight,
+                &package.full_version,
+                &package.desc_highlight,
+            ]);
+        }
 
-        write!(
-            f,
-            "{}",
-            packages
-                .iter()
-                .map(|pkg| format!(
-                    "{}{}{}",
-                    pad_str(
-                        &pkg.name_highlight,
-                        max_pkgname_width + PADDING,
-                        Alignment::Left,
-                        None
-                    ),
-                    pad_str(
-                        &pkg.full_version,
-                        max_version_width + PADDING,
-                        Alignment::Left,
-                        None
-                    ),
-                    pkg.desc_highlight,
-                ))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
+        let table_settings = Settings::default().with(Style::blank()).with(
+            Modify::new(SegmentAll)
+                .with(Alignment::left())
+                .with(Padding::new(0, PADDING, 0, 0)),
+        );
+
+        write!(f, "{}", packages_table.build().with(table_settings))
     }
 }
 
