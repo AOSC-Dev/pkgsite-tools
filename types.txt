@@ -1,0 +1,11 @@
+PackageSiteClient<T: ToString> { url: String, client: Client }
+
+AnnotatedMultipleResponse<T> { inner: Vec<(String, T)> }
+
+UnannotatedMultipleResponse<T> { inner: Vec<T> }
+
+SingleResponse<T> { inner: T }
+
+impl<T> ToString for AnnotatedMultipleResponse<T> { }
+impl<T> ToString for UnannotatedMultipleResponse<T> { }
+impl<T> ToString for SingleResponse<T> { }

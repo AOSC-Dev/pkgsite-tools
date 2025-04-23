@@ -125,11 +125,17 @@ mod test {
 
     #[tokio::test]
     async fn test_fetch() {
-        println!("{:?}", Search::fetch("-base").await.unwrap());
+        println!(
+            "{:?}",
+            Search::fetch("-base", false).await.unwrap().to_string()
+        );
     }
 
     #[tokio::test]
     async fn test_display() {
-        println!("{}", Search::fetch("-base").await.unwrap());
+        println!(
+            "{}",
+            Search::fetch("-base", false).await.unwrap().to_string()
+        );
     }
 }

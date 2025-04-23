@@ -26,10 +26,12 @@ async fn main() -> Result<()> {
                 pattern,
                 search_only,
             } => {
-                print_res!(single models::search::Search, pattern, search_only);
+                print_res!(single models::search::Search, &pattern, search_only);
             }
         },
-        None => unreachable!(),
+        None => {
+            print_res!(single models::index::Index);
+        }
     };
 
     Ok(())
