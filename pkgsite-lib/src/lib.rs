@@ -41,15 +41,16 @@ impl PackagesSiteClient {
     pub async fn depends(&self, packages: &[String]) -> PResult<Vec<(String, Depends)>> {
         let mut res = Vec::new();
         for package in packages.iter() {
-            res.push((
-                package.clone(),
-                self.client
-                    .get(format!("{}/packages/{}?type=json", &self.url, package))
-                    .send()
-                    .await?
-                    .json::<Depends>()
-                    .await?,
-            ));
+            if let Ok(dep) = self
+                .client
+                .get(format!("{}/packages/{}?type=json", &self.url, package))
+                .send()
+                .await?
+                .json::<Depends>()
+                .await?
+            {
+                res.push((package.clone(), dep));
+            }
         }
         Ok(res)
     }
@@ -57,15 +58,16 @@ impl PackagesSiteClient {
     pub async fn rdepends(&self, packages: &[String]) -> PResult<Vec<(String, RDepends)>> {
         let mut res = Vec::new();
         for package in packages.iter() {
-            res.push((
-                package.clone(),
-                self.client
-                    .get(format!("{}/revdep/{}?type=json", &self.url, package))
-                    .send()
-                    .await?
-                    .json::<RDepends>()
-                    .await?,
-            ));
+            if let Ok(revdep) = self
+                .client
+                .get(format!("{}/revdep/{}?type=json", &self.url, package))
+                .send()
+                .await?
+                .json::<RDepends>()
+                .await
+            {
+                res.push((package.clone(), revdep));
+            }
         }
         Ok(res)
     }
@@ -73,14 +75,16 @@ impl PackagesSiteClient {
     pub async fn info(&self, packages: &[String]) -> PResult<Vec<Info>> {
         let mut res = Vec::new();
         for package in packages.iter() {
-            res.push(
-                self.client
-                    .get(format!("{}/packages/{}?type=json", &self.url, package))
-                    .send()
-                    .await?
-                    .json::<Info>()
-                    .await?,
-            );
+            if let Ok(info) = self
+                .client
+                .get(format!("{}/packages/{}?type=json", &self.url, package))
+                .send()
+                .await?
+                .json::<Info>()
+                .await
+            {
+                res.push(info);
+            }
         }
         Ok(res)
     }
