@@ -35,7 +35,7 @@ impl Display for IndexView<'_> {
         let mut updates_table = Builder::default();
         for package in &self.inner.updates {
             let mut ver = match package.status {
-                1 => style(&package.full_version).red().italic(),
+                1 => style(&package.full_version).red(),
                 2 => style(&package.full_version).blue(),
                 _ => style(&package.full_version),
             };
@@ -90,10 +90,22 @@ impl Display for IndexView<'_> {
 Latest Source Updates:
 {}
 
+NOTE:
+{}
+{}
+{}
+{}
+{}
+
 Repositories:
 {}",
             &self.inner.total,
             updates_table.build().with(updates_table_settings),
+            style("Up to Date").green(),
+            style("In Testing Branch").blue(),
+            style("Older than Source / Missing").yellow(),
+            style("Source File Contains Error").red(),
+            style("Source Removed").blink(),
             repositories_table.build().with(repositories_table_settings),
         )
     }
