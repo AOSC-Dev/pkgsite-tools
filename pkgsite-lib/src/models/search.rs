@@ -5,6 +5,7 @@ pub struct Package {
     pub name_highlight: String,
     pub full_version: String,
     pub desc_highlight: String,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
