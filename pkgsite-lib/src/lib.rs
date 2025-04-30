@@ -38,9 +38,9 @@ impl PackagesSiteClient {
         )
     }
 
-    pub async fn depends(&self, packages: &[String]) -> PResult<Vec<(String, Depends)>> {
+    pub async fn depends<'a>(&self, packages: &'a [String]) -> PResult<Vec<(&'a str, Depends)>> {
         let mut res = Vec::new();
-        for package in packages.iter() {
+        for package in packages {
             if let Ok(dep) = self
                 .client
                 .get(format!("{}/packages/{}?type=json", &self.url, package))
@@ -49,13 +49,13 @@ impl PackagesSiteClient {
                 .json::<Depends>()
                 .await
             {
-                res.push((package.clone(), dep));
+                res.push((package.as_str(), dep));
             }
         }
         Ok(res)
     }
 
-    pub async fn rdepends(&self, packages: &[String]) -> PResult<Vec<(String, RDepends)>> {
+    pub async fn rdepends<'a>(&self, packages: &'a [String]) -> PResult<Vec<(&'a str, RDepends)>> {
         let mut res = Vec::new();
         for package in packages.iter() {
             if let Ok(revdep) = self
@@ -66,18 +66,26 @@ impl PackagesSiteClient {
                 .json::<RDepends>()
                 .await
             {
-                res.push((package.clone(), revdep));
+                res.push((package.as_str(), revdep));
             }
         }
         Ok(res)
     }
 
-    pub async fn info(&self, packages: &[String]) -> PResult<Vec<Info>> {
+    pub async fn info<I, S>(&self, packages: I) -> PResult<Vec<Info>>
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<str>,
+    {
         let mut res = Vec::new();
-        for package in packages.iter() {
+        for package in packages {
             if let Ok(info) = self
                 .client
-                .get(format!("{}/packages/{}?type=json", &self.url, package))
+                .get(format!(
+                    "{}/packages/{}?type=json",
+                    &self.url,
+                    package.as_ref()
+                ))
                 .send()
                 .await?
                 .json::<Info>()
@@ -104,7 +112,7 @@ impl PackagesSiteClient {
         match response.status() {
             StatusCode::OK => Ok(SearchExactMatch::Search(response.json::<Search>().await?)),
             StatusCode::SEE_OTHER => Ok(SearchExactMatch::Info(Box::new(
-                self.info(&[pattern.to_string()]).await?.pop().unwrap(),
+                self.info(&[pattern]).await?.pop().unwrap(),
             ))),
             code => Err(PackagesSiteError::UnexpectedStatus(code)),
         }
