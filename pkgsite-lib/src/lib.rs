@@ -31,6 +31,13 @@ impl PackagesSiteClient {
         }
     }
 
+    pub fn from_env() -> Self {
+        Self::new(
+            std::env::var("PACKAGE_SITE_URL")
+                .expect("PACKAGE_SITE_URL environment variable is not set"),
+        )
+    }
+
     pub async fn depends(&self, packages: &[String]) -> PResult<Vec<(String, Depends)>> {
         let mut res = Vec::new();
         for package in packages.iter() {
