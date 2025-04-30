@@ -16,6 +16,7 @@ pub struct Package {
     pub description: String,
     pub full_version: String,
     pub status: i32,
+    pub ver_compare: i32,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
