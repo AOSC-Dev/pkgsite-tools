@@ -11,6 +11,7 @@ pub struct PackageError {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DpkgMeta {
     pub hasmeta: bool,
+    pub version: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
