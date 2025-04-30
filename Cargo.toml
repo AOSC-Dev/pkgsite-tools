@@ -20,6 +20,11 @@ time = { version = "0.3", features = ["serde", "formatting"] }
 tabled = { version = "0.19", features = ["ansi"] }
 pkgsite-lib = { path = "./pkgsite-lib" }
 
+
+[build-dependencies]
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
+
 [[bin]]
 name = "pkgsite"
 path = "src/main.rs"
