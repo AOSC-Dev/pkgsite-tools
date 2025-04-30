@@ -1,6 +1,5 @@
 use itertools::Itertools;
 
-pub const PACKAGES_SITE_URL: &str = "https://packages.aosc.io";
 pub const PADDING: usize = 4;
 
 pub fn dedup_packages(packages: Vec<String>) -> Vec<String> {
@@ -9,31 +8,32 @@ pub fn dedup_packages(packages: Vec<String>) -> Vec<String> {
 
 #[macro_export]
 macro_rules! print_res {
-    ( unannotated $struct:ty $(, $arg:expr)* ) => {
+    ( unannotated $pkgsite:expr, $method:ident, $struct:ty, $packages:expr $(, $arg:expr)* ) => {
+        let inner = $pkgsite.$method(&dedup_packages($packages) $(, $arg)*).await?;
         println!(
             "{}",
-            <$struct>::fetch(&dedup_packages($($arg, )*))
-                .await?
+            inner
                 .iter()
-                .map(|res| res.to_string())
+                .map(|i| <$struct>::from(i).to_string())
                 .collect::<Vec<String>>()
                 .join("\n\n")
         );
     };
 
-    ( annotated $struct:ty $(, $arg:expr)* ) => {
+    ( annotated $pkgsite:expr, $method:ident, $struct:ty, $packages:expr $(, $arg:expr)* ) => {
+        let inner = $pkgsite.$method(&dedup_packages($packages) $(, $arg)*).await?;
         println!(
             "{}",
-            <$struct>::fetch(&dedup_packages($($arg, )*))
-                .await?
+            inner
                 .iter()
-                .map(|(pkg, res)| format!("{}:\n{}", pkg, res))
+                .map(|(pkg, i)| format!("{}:\n{}", pkg, <$struct>::from(i)))
                 .collect::<Vec<String>>()
                 .join("\n\n")
         );
     };
 
-    ( single $struct:ty $(, $arg:expr)* ) => {
-        println!("{}", <$struct>::fetch($($arg, )*).await?.to_string());
+    ( single $pkgsite:expr, $method:ident, $struct:ty $(, $arg:expr)* ) => {
+        let inner = $pkgsite.$method($($arg, )*).await?;
+        println!("{}", <$struct>::from(&inner).to_string());
     };
 }

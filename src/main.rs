@@ -1,8 +1,9 @@
 use anyhow::Result;
 use clap::Parser;
+use pkgsite_lib::PackagesSiteClient;
 
 mod cli;
-mod models;
+mod views;
 
 use cli::*;
 use pkgsite_tools::{dedup_packages, print_res};
@@ -10,27 +11,28 @@ use pkgsite_tools::{dedup_packages, print_res};
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Cli::parse();
+    let pkgsite = PackagesSiteClient::default();
 
     match args.subcommands {
         Some(cmd) => match cmd {
             Subcommands::Depends { packages } => {
-                print_res!(annotated models::depends::Depends, packages);
+                print_res!(annotated pkgsite, depends, views::depends::DependsView, packages);
             }
             Subcommands::Rdepends { packages } => {
-                print_res!(annotated models::rdepends::RDepends, packages);
+                print_res!(annotated pkgsite, rdepends, views::rdepends::RDependsView, packages);
             }
             Subcommands::Show { packages } => {
-                print_res!(unannotated models::info::Info, packages);
+                print_res!(unannotated pkgsite, info, views::info::InfoView, packages);
             }
             Subcommands::Search {
                 pattern,
                 search_only,
             } => {
-                print_res!(single models::search::Search, &pattern, search_only);
+                print_res!(single pkgsite, search, views::search::SearchView, &pattern, search_only);
             }
         },
         None => {
-            print_res!(single models::index::Index);
+            print_res!(single pkgsite, index, views::index::IndexView);
         }
     };
 

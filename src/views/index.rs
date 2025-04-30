@@ -1,6 +1,5 @@
-use anyhow::Result;
 use console::style;
-use serde::{Deserialize, Serialize};
+use pkgsite_lib::index::Index;
 use std::fmt::Display;
 use tabled::{
     builder::Builder,
@@ -8,7 +7,7 @@ use tabled::{
 };
 use time::{UtcDateTime, format_description};
 
-use pkgsite_tools::{PACKAGES_SITE_URL, PADDING};
+use pkgsite_tools::PADDING;
 
 const REPOSITORY_HEADERS: [&str; 6] = [
     "Repository",
@@ -19,46 +18,22 @@ const REPOSITORY_HEADERS: [&str; 6] = [
     "Last Update (UTC)",
 ];
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Repo {
-    realname: String,
-    date: i32,
-    pkgcount: i32,
-    ghost: i32,
-    lagging: i32,
-    missing: i32,
+pub struct IndexView<'a> {
+    inner: &'a Index,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Package {
-    name: String,
-    description: String,
-    full_version: String,
-    status: i32,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Index {
-    total: i64,
-    repo_categories: Vec<(String, Vec<Repo>)>,
-    updates: Vec<Package>,
-}
-
-impl Index {
-    pub async fn fetch() -> Result<Self> {
-        Ok(reqwest::get(format!("{}/?type=json", PACKAGES_SITE_URL))
-            .await?
-            .json::<Self>()
-            .await?)
+impl<'a> From<&'a Index> for IndexView<'a> {
+    fn from(inner: &'a Index) -> Self {
+        Self { inner }
     }
 }
 
-impl Display for Index {
+impl Display for IndexView<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let (_, repositories) = &self.repo_categories.first().unwrap();
+        let (_, repositories) = &self.inner.repo_categories.first().unwrap();
 
         let mut updates_table = Builder::default();
-        for package in &self.updates {
+        for package in &self.inner.updates {
             let italic_version = style(&package.full_version).italic().to_string();
             updates_table.push_record([
                 &package.name,
@@ -110,24 +85,9 @@ Latest Source Updates:
 
 Repositories:
 {}",
-            &self.total,
+            &self.inner.total,
             updates_table.build().with(updates_table_settings),
             repositories_table.build().with(repositories_table_settings),
         )
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_fetch() {
-        println!("{:?}", Index::fetch().await.unwrap());
-    }
-
-    #[tokio::test]
-    async fn test_display() {
-        println!("{}", Index::fetch().await.unwrap());
     }
 }

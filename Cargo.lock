@@ -965,6 +965,7 @@ dependencies = [
  "console",
  "html-escape",
  "itertools",
+ "pkgsite-lib",
  "regex",
  "reqwest",
  "serde",

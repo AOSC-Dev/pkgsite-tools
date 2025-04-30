@@ -20,6 +20,7 @@ regex = "1.11"
 html-escape = "0.2"
 time = { version = "0.3", features = ["serde", "formatting"] }
 tabled = { version = "0.18", features = ["derive", "ansi"] }
+pkgsite-lib = { path = "./pkgsite-lib" }
 
 [[bin]]
 name = "pkgsite"

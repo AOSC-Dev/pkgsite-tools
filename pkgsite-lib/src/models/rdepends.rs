@@ -2,22 +2,22 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
-struct RevDependency {
-    package: String,
-    version: String,
-    architecture: String,
+pub struct RevDependency {
+    pub package: String,
+    pub version: String,
+    pub architecture: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct RevDependencyGroup {
-    description: String,
-    deps: Vec<RevDependency>,
+pub struct RevDependencyGroup {
+    pub description: String,
+    pub deps: Vec<RevDependency>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RDepends {
-    revdeps: Vec<RevDependencyGroup>,
-    sobreaks: Vec<Vec<String>>,
-    sobreaks_circular: Vec<String>,
-    sorevdeps: HashMap<String, Vec<String>>,
+    pub revdeps: Vec<RevDependencyGroup>,
+    pub sobreaks: Vec<Vec<String>>,
+    pub sobreaks_circular: Vec<String>,
+    pub sorevdeps: HashMap<String, Vec<String>>,
 }
