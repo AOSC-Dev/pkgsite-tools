@@ -1,5 +1,5 @@
 use console::style;
-use pkgsite_lib::{SearchExactMatch, search::Package};
+use pkgsite_lib::{SearchExactMatch, info::Info, search::Package};
 use regex::{Captures, Regex};
 use std::fmt::Display;
 use tabled::{
@@ -66,7 +66,7 @@ impl Display for SearchView<'_> {
                 write!(
                     f,
                     "Found an exact match:\n(append --search-only to search the keyword instead)\n\n{}",
-                    InfoView::from(info)
+                    InfoView::from(info as &Info)
                 )
             }
         }

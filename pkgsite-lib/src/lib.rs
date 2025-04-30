@@ -92,10 +92,10 @@ impl PackagesSiteClient {
 
         match response.status() {
             StatusCode::OK => Ok(SearchExactMatch::Search(response.json::<Search>().await?)),
-            StatusCode::SEE_OTHER => Ok(SearchExactMatch::Info(
+            StatusCode::SEE_OTHER => Ok(SearchExactMatch::Info(Box::new(
                 self.info(&[pattern.to_string()]).await?.pop().unwrap(),
-            )),
-            code @ _ => Err(PackagesSiteError::UnexpectedStatus(code)),
+            ))),
+            code => Err(PackagesSiteError::UnexpectedStatus(code)),
         }
     }
 

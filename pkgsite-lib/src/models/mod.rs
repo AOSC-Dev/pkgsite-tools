@@ -6,5 +6,5 @@ pub mod search;
 
 pub enum SearchExactMatch {
     Search(search::Search),
-    Info(info::Info),
+    Info(Box<info::Info>),
 }

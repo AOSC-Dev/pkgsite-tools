@@ -72,15 +72,12 @@ impl Display for RDependsView<'_> {
             if self.inner.revdeps.is_empty() {
                 String::new()
             } else {
-                format!(
-                    "{}",
-                    self.inner
-                        .revdeps
-                        .iter()
-                        .map(|revdep| RevDependencyGroupView::from(revdep).to_string())
-                        .collect::<Vec<String>>()
-                        .join("\n\n")
-                )
+                self.inner
+                    .revdeps
+                    .iter()
+                    .map(|revdep| RevDependencyGroupView::from(revdep).to_string())
+                    .collect::<Vec<String>>()
+                    .join("\n\n")
             },
             if self.inner.sobreaks.is_empty() {
                 String::new()
