@@ -9,8 +9,6 @@ repository = "https://github.com/AOSC-Dev/pkgsite-tools"
 homepage = "https://github.com/AOSC-Dev/pkgsite-tools"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-reqwest = { version = "0.12", features = ["json"] }
 anyhow = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 clap = { version = "4", features = ["derive"] }
@@ -19,7 +17,7 @@ console = "0.15"
 regex = "1.11"
 html-escape = "0.2"
 time = { version = "0.3", features = ["serde", "formatting"] }
-tabled = { version = "0.18", features = ["derive", "ansi"] }
+tabled = { version = "0.19", features = ["ansi"] }
 pkgsite-lib = { path = "./pkgsite-lib" }
 
 [[bin]]
