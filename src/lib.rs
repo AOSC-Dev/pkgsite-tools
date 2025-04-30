@@ -9,7 +9,8 @@ pub fn dedup_packages(packages: Vec<String>) -> Vec<String> {
 #[macro_export]
 macro_rules! print_res {
     ( unannotated $pkgsite:expr, $method:ident, $struct:ty, $packages:expr $(, $arg:expr)* ) => {
-        let inner = $pkgsite.$method(&dedup_packages($packages) $(, $arg)*).await?;
+        let dedup = dedup_packages($packages);
+        let inner = $pkgsite.$method(&dedup $(, $arg)*).await?;
         println!(
             "{}",
             inner
@@ -21,7 +22,8 @@ macro_rules! print_res {
     };
 
     ( annotated $pkgsite:expr, $method:ident, $struct:ty, $packages:expr $(, $arg:expr)* ) => {
-        let inner = $pkgsite.$method(&dedup_packages($packages) $(, $arg)*).await?;
+        let dedup = dedup_packages($packages);
+        let inner = $pkgsite.$method(&dedup $(, $arg)*).await?;
         println!(
             "{}",
             inner
