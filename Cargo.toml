@@ -16,7 +16,7 @@ itertools = "0.14"
 console = "0.15"
 regex = "1.11"
 html-escape = "0.2"
-time = { version = "0.3", features = ["serde", "formatting"] }
+time = { version = "0.3", features = ["formatting"] }
 tabled = { version = "0.19", features = ["ansi"] }
 pkgsite-lib = { path = "./pkgsite-lib" }
 
