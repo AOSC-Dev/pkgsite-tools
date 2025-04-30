@@ -34,16 +34,23 @@ impl Display for IndexView<'_> {
 
         let mut updates_table = Builder::default();
         for package in &self.inner.updates {
-            let italic_version = style(&package.full_version).italic().to_string();
-            updates_table.push_record([
-                &package.name,
-                if package.status == 1 {
-                    &italic_version
-                } else {
-                    &package.full_version
-                },
-                &package.description,
-            ]);
+            let mut ver = match package.status {
+                1 => style(&package.full_version).red().italic(),
+                2 => style(&package.full_version).blue(),
+                _ => style(&package.full_version),
+            };
+
+            if ![1, 2].contains(&package.status) {
+                ver = match package.ver_compare {
+                    -2 => ver.blink(),
+                    -1 => ver.yellow(),
+                    0 => ver.green(),
+                    1 => ver.blue(),
+                    _ => ver,
+                };
+            }
+
+            updates_table.push_record([&package.name, &ver.to_string(), &package.description]);
         }
 
         let mut repositories_table = Builder::default();
