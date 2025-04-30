@@ -47,7 +47,7 @@ impl PackagesSiteClient {
                 .send()
                 .await?
                 .json::<Depends>()
-                .await?
+                .await
             {
                 res.push((package.clone(), dep));
             }
