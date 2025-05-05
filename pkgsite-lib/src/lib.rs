@@ -5,7 +5,10 @@ pub mod models;
 
 use error::{PResult, PackagesSiteError};
 pub use models::*;
-use models::{depends::Depends, index::Index, info::Info, rdepends::RDepends, search::Search};
+use models::{
+    depends::Depends, index::Index, info::Info, rdepends::RDepends, search::Search,
+    updates::Updates,
+};
 
 pub(crate) const PACKAGES_SITE_URL: &str = "https://packages.aosc.io";
 
@@ -125,6 +128,16 @@ impl PackagesSiteClient {
             .send()
             .await?
             .json::<Index>()
+            .await?)
+    }
+
+    pub async fn updates(&self) -> PResult<Updates> {
+        Ok(self
+            .client
+            .get(format!("{}/updates?type=json", &self.url))
+            .send()
+            .await?
+            .json::<Updates>()
             .await?)
     }
 }
