@@ -29,7 +29,7 @@ set edit:completion:arg-completer[pkgsite] = {|@words|
             cand show 'Get package information'
             cand info 'Get package information'
             cand search 'Search for packages'
-            cand updates 'List latest source updates'
+            cand updates 'List 100 latest source updates'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'pkgsite;depends'= {
@@ -72,7 +72,7 @@ set edit:completion:arg-completer[pkgsite] = {|@words|
             cand rdepends 'Query reverse dependencies of packages'
             cand show 'Get package information'
             cand search 'Search for packages'
-            cand updates 'List latest source updates'
+            cand updates 'List 100 latest source updates'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'pkgsite;help;depends'= {

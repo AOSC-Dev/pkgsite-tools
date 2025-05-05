@@ -30,7 +30,7 @@ async fn run() -> Result<()> {
             Subcommands::Depends { packages } => {
                 print_res!(annotated pkgsite, depends, views::depends::DependsView, packages);
             }
-            Subcommands::RDepends { packages } => {
+            Subcommands::Rdepends { packages } => {
                 print_res!(annotated pkgsite, rdepends, views::rdepends::RDependsView, packages);
             }
             Subcommands::Show { packages } => {
@@ -57,7 +57,7 @@ async fn run() -> Result<()> {
             Subcommands::Depends(Depends { packages }) => {
                 print_res!(annotated pkgsite, depends, views::depends::DependsView, packages);
             }
-            Subcommands::RDepends(RDepends { packages }) => {
+            Subcommands::Rdepends(Rdepends { packages }) => {
                 print_res!(annotated pkgsite, rdepends, views::rdepends::RDependsView, packages);
             }
             Subcommands::Show(Show { packages }) => {

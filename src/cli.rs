@@ -19,7 +19,7 @@ pub enum Subcommands {
     Depends { packages: Vec<String> },
     /// Query reverse dependencies of packages
     #[command(visible_alias = "rdep")]
-    RDepends { packages: Vec<String> },
+    Rdepends { packages: Vec<String> },
     /// Get package information
     #[command(visible_alias = "info")]
     Show { packages: Vec<String> },
@@ -46,7 +46,7 @@ pub struct Cli {
 #[argh(subcommand)]
 pub enum Subcommands {
     Depends(Depends),
-    RDepends(RDepends),
+    Rdepends(Rdepends),
     Show(Show),
     Search(Search),
     Updates(Updates),
@@ -65,7 +65,7 @@ pub struct Depends {
 #[derive(FromArgs, Debug)]
 /// Query reverse dependencies of packages
 #[argh(subcommand, name = "rdepends")]
-pub struct RDepends {
+pub struct Rdepends {
     #[argh(positional, greedy)]
     pub packages: Vec<String>,
 }

@@ -141,7 +141,7 @@ _pkgsite_commands() {
 'show:Get package information' \
 'info:Get package information' \
 'search:Search for packages' \
-'updates:List latest source updates' \
+'updates:List 100 latest source updates' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'pkgsite commands' commands "$@"
@@ -158,7 +158,7 @@ _pkgsite__help_commands() {
 'rdepends:Query reverse dependencies of packages' \
 'show:Get package information' \
 'search:Search for packages' \
-'updates:List latest source updates' \
+'updates:List 100 latest source updates' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'pkgsite help commands' commands "$@"
