@@ -24,4 +24,6 @@ pub enum Subcommands {
         #[arg(long, short, visible_alias = "no-redir")]
         search_only: bool,
     },
+    /// List latest source updates
+    Updates,
 }

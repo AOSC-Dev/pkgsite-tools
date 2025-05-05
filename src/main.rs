@@ -30,6 +30,9 @@ async fn main() -> Result<()> {
             } => {
                 print_res!(single pkgsite, search, views::search::SearchView, &pattern, search_only);
             }
+            Subcommands::Updates => {
+                print_res!(single pkgsite, updates, views::updates::UpdatesView);
+            }
         },
         None => {
             print_res!(single pkgsite, index, views::index::IndexView);
