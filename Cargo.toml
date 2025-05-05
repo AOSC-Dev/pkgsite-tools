@@ -18,8 +18,8 @@ regex = "1.11"
 html-escape = "0.2"
 time = { version = "0.3", features = ["formatting"] }
 tabled = { version = "0.19", features = ["ansi"] }
-pkgsite-lib = { path = "./pkgsite-lib" }
-
+nyquest-preset = { version = "0.1", features = ["async"], optional = true }
+pkgsite-lib = { path = "./pkgsite-lib", default-features = false }
 
 [build-dependencies]
 clap = { version = "4", features = ["derive"] }
@@ -28,6 +28,10 @@ clap_complete = "4"
 [[bin]]
 name = "pkgsite"
 path = "src/main.rs"
+
+[features]
+default = ["pkgsite-lib/default"]
+nyquest = ["pkgsite-lib/nyquest", "dep:nyquest-preset"]
 
 [workspace]
 members = ["pkgsite-lib"]

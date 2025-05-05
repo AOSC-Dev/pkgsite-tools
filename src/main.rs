@@ -11,7 +11,13 @@ use pkgsite_tools::{dedup_packages, print_res};
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Cli::parse();
+    #[cfg(feature = "default")]
     let pkgsite = PackagesSiteClient::default();
+
+    #[cfg(feature = "nyquest")]
+    nyquest_preset::register();
+    #[cfg(feature = "nyquest")]
+    let pkgsite = PackagesSiteClient::default().await?;
 
     match args.subcommands {
         Some(cmd) => match cmd {

@@ -1167,6 +1167,7 @@ dependencies = [
  "console",
  "html-escape",
  "itertools",
+ "nyquest-preset",
  "pkgsite-lib",
  "regex",
  "tabled",
