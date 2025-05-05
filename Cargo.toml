@@ -32,8 +32,9 @@ name = "pkgsite"
 path = "src/main.rs"
 
 [features]
-default = ["pkgsite-lib/default", "tokio", "clap"]
+default = ["reqwest", "tokio", "clap"]
 minimal = ["nyquest", "compio", "argh"]
+reqwest = ["pkgsite-lib/reqwest", "tokio"]
 nyquest = ["pkgsite-lib/nyquest", "dep:nyquest-preset"]
 clap = ["dep:clap", "dep:clap_complete"]
 argh = ["dep:argh"]
