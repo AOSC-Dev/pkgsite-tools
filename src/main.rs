@@ -8,8 +8,7 @@ mod views;
 use cli::*;
 use pkgsite_tools::{dedup_packages, print_res};
 
-#[tokio::main]
-async fn main() -> Result<()> {
+async fn run() -> Result<()> {
     let args = Cli::parse();
     #[cfg(feature = "default")]
     let pkgsite = PackagesSiteClient::default();
@@ -45,5 +44,19 @@ async fn main() -> Result<()> {
         }
     };
 
+    Ok(())
+}
+
+#[cfg(feature = "tokio")]
+#[tokio::main]
+async fn main() -> Result<()> {
+    run().await?;
+    Ok(())
+}
+
+#[cfg(feature = "compio")]
+#[compio::main]
+async fn main() -> Result<()> {
+    run().await?;
     Ok(())
 }

@@ -10,7 +10,8 @@ homepage = "https://github.com/AOSC-Dev/pkgsite-tools"
 
 [dependencies]
 anyhow = "1"
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
+compio = { version = "0.14", features = ["macros"], optional = true }
 clap = { version = "4", features = ["derive"] }
 itertools = "0.14"
 console = "0.15"
@@ -30,8 +31,10 @@ name = "pkgsite"
 path = "src/main.rs"
 
 [features]
-default = ["pkgsite-lib/default"]
+default = ["pkgsite-lib/default", "tokio"]
 nyquest = ["pkgsite-lib/nyquest", "dep:nyquest-preset"]
+tokio = ["dep:tokio"]
+compio = ["dep:compio"]
 
 [workspace]
 members = ["pkgsite-lib"]
