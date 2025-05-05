@@ -39,7 +39,7 @@ impl Display for UpdatesView<'_> {
 
         write!(
             f,
-            "Latest Source Updates:
+            "Latest 100 Source Updates:
 {}
 
 NOTE:
