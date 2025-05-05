@@ -1,4 +1,5 @@
 use anyhow::Result;
+#[cfg(feature = "clap")]
 use clap::Parser;
 use pkgsite_lib::PackagesSiteClient;
 
@@ -9,7 +10,12 @@ use cli::*;
 use pkgsite_tools::{dedup_packages, print_res};
 
 async fn run() -> Result<()> {
+    #[cfg(feature = "clap")]
     let args = Cli::parse();
+
+    #[cfg(feature = "argh")]
+    let args = argh::from_env::<Cli>();
+
     #[cfg(feature = "default")]
     let pkgsite = PackagesSiteClient::default();
 
@@ -18,12 +24,13 @@ async fn run() -> Result<()> {
     #[cfg(feature = "nyquest")]
     let pkgsite = PackagesSiteClient::default().await?;
 
+    #[cfg(feature = "clap")]
     match args.subcommands {
         Some(cmd) => match cmd {
             Subcommands::Depends { packages } => {
                 print_res!(annotated pkgsite, depends, views::depends::DependsView, packages);
             }
-            Subcommands::Rdepends { packages } => {
+            Subcommands::RDepends { packages } => {
                 print_res!(annotated pkgsite, rdepends, views::rdepends::RDependsView, packages);
             }
             Subcommands::Show { packages } => {
@@ -36,6 +43,33 @@ async fn run() -> Result<()> {
                 print_res!(single pkgsite, search, views::search::SearchView, &pattern, search_only);
             }
             Subcommands::Updates => {
+                print_res!(single pkgsite, updates, views::updates::UpdatesView);
+            }
+        },
+        None => {
+            print_res!(single pkgsite, index, views::index::IndexView);
+        }
+    };
+
+    #[cfg(feature = "argh")]
+    match args.subcommands {
+        Some(cmd) => match cmd {
+            Subcommands::Depends(Depends { packages }) => {
+                print_res!(annotated pkgsite, depends, views::depends::DependsView, packages);
+            }
+            Subcommands::RDepends(RDepends { packages }) => {
+                print_res!(annotated pkgsite, rdepends, views::rdepends::RDependsView, packages);
+            }
+            Subcommands::Show(Show { packages }) => {
+                print_res!(unannotated pkgsite, info, views::info::InfoView, packages);
+            }
+            Subcommands::Search(Search {
+                pattern,
+                search_only,
+            }) => {
+                print_res!(single pkgsite, search, views::search::SearchView, &pattern, search_only);
+            }
+            Subcommands::Updates(_) => {
                 print_res!(single pkgsite, updates, views::updates::UpdatesView);
             }
         },
