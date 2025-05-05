@@ -32,6 +32,7 @@ Register-ArgumentCompleter -Native -CommandName 'pkgsite' -ScriptBlock {
             [CompletionResult]::new('show', 'show', [CompletionResultType]::ParameterValue, 'Get package information')
             [CompletionResult]::new('info', 'info', [CompletionResultType]::ParameterValue, 'Get package information')
             [CompletionResult]::new('search', 'search', [CompletionResultType]::ParameterValue, 'Search for packages')
+            [CompletionResult]::new('updates', 'updates', [CompletionResultType]::ParameterValue, 'List latest source updates')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
@@ -73,11 +74,17 @@ Register-ArgumentCompleter -Native -CommandName 'pkgsite' -ScriptBlock {
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
             break
         }
+        'pkgsite;updates' {
+            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help')
+            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
+            break
+        }
         'pkgsite;help' {
             [CompletionResult]::new('depends', 'depends', [CompletionResultType]::ParameterValue, 'Query dependencies of packages')
             [CompletionResult]::new('rdepends', 'rdepends', [CompletionResultType]::ParameterValue, 'Query reverse dependencies of packages')
             [CompletionResult]::new('show', 'show', [CompletionResultType]::ParameterValue, 'Get package information')
             [CompletionResult]::new('search', 'search', [CompletionResultType]::ParameterValue, 'Search for packages')
+            [CompletionResult]::new('updates', 'updates', [CompletionResultType]::ParameterValue, 'List latest source updates')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
@@ -91,6 +98,9 @@ Register-ArgumentCompleter -Native -CommandName 'pkgsite' -ScriptBlock {
             break
         }
         'pkgsite;help;search' {
+            break
+        }
+        'pkgsite;help;updates' {
             break
         }
         'pkgsite;help;help' {

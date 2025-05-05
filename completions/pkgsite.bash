@@ -36,6 +36,9 @@ _pkgsite() {
             pkgsite,show)
                 cmd="pkgsite__show"
                 ;;
+            pkgsite,updates)
+                cmd="pkgsite__updates"
+                ;;
             pkgsite__help,depends)
                 cmd="pkgsite__help__depends"
                 ;;
@@ -51,6 +54,9 @@ _pkgsite() {
             pkgsite__help,show)
                 cmd="pkgsite__help__show"
                 ;;
+            pkgsite__help,updates)
+                cmd="pkgsite__help__updates"
+                ;;
             *)
                 ;;
         esac
@@ -58,7 +64,7 @@ _pkgsite() {
 
     case "${cmd}" in
         pkgsite)
-            opts="-h -V --help --version depends dep rdepends rdep show info search help"
+            opts="-h -V --help --version depends dep rdepends rdep show info search updates help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -86,7 +92,7 @@ _pkgsite() {
             return 0
             ;;
         pkgsite__help)
-            opts="depends rdepends show search help"
+            opts="depends rdepends show search updates help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -169,6 +175,20 @@ _pkgsite() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        pkgsite__help__updates)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         pkgsite__rdepends)
             opts="-h --help [PACKAGES]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
@@ -199,6 +219,20 @@ _pkgsite() {
             ;;
         pkgsite__show)
             opts="-h --help [PACKAGES]..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        pkgsite__updates)
+            opts="-h --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

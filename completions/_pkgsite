@@ -80,6 +80,12 @@ _arguments "${_arguments_options[@]}" : \
 ':pattern:_default' \
 && ret=0
 ;;
+(updates)
+_arguments "${_arguments_options[@]}" : \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" : \
 ":: :_pkgsite__help_commands" \
@@ -108,6 +114,10 @@ _arguments "${_arguments_options[@]}" : \
 _arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
+(updates)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" : \
 && ret=0
@@ -131,6 +141,7 @@ _pkgsite_commands() {
 'show:Get package information' \
 'info:Get package information' \
 'search:Search for packages' \
+'updates:List latest source updates' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'pkgsite commands' commands "$@"
@@ -147,6 +158,7 @@ _pkgsite__help_commands() {
 'rdepends:Query reverse dependencies of packages' \
 'show:Get package information' \
 'search:Search for packages' \
+'updates:List latest source updates' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'pkgsite help commands' commands "$@"
@@ -176,6 +188,11 @@ _pkgsite__help__show_commands() {
     local commands; commands=()
     _describe -t commands 'pkgsite help show commands' commands "$@"
 }
+(( $+functions[_pkgsite__help__updates_commands] )) ||
+_pkgsite__help__updates_commands() {
+    local commands; commands=()
+    _describe -t commands 'pkgsite help updates commands' commands "$@"
+}
 (( $+functions[_pkgsite__rdepends_commands] )) ||
 _pkgsite__rdepends_commands() {
     local commands; commands=()
@@ -190,6 +207,11 @@ _pkgsite__search_commands() {
 _pkgsite__show_commands() {
     local commands; commands=()
     _describe -t commands 'pkgsite show commands' commands "$@"
+}
+(( $+functions[_pkgsite__updates_commands] )) ||
+_pkgsite__updates_commands() {
+    local commands; commands=()
+    _describe -t commands 'pkgsite updates commands' commands "$@"
 }
 
 if [ "$funcstack[1]" = "_pkgsite" ]; then
