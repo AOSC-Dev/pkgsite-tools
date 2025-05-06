@@ -9,6 +9,8 @@ use tabled::{
 use super::fmt_pkg_version;
 use pkgsite_tools::PADDING;
 
+const UPDATES_HEADERS: [&str; 3] = ["Package", "DPKG Version", "Spec Version"];
+
 pub struct UpdatesView<'a> {
     inner: &'a Updates,
 }
@@ -22,6 +24,7 @@ impl<'a> From<&'a Updates> for UpdatesView<'a> {
 impl Display for UpdatesView<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut updates_table = Builder::default();
+        updates_table.push_record(UPDATES_HEADERS);
         for package in &self.inner.packages {
             updates_table.push_record([
                 &package.name,
