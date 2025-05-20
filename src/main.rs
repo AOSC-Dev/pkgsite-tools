@@ -16,8 +16,8 @@ async fn run() -> Result<()> {
     #[cfg(feature = "argh")]
     let args = argh::from_env::<Cli>();
 
-    #[cfg(feature = "default")]
-    let pkgsite = PackagesSiteClient::default();
+    #[cfg(feature = "reqwest")]
+    let pkgsite = PackagesSiteClient::default()?;
 
     #[cfg(feature = "nyquest")]
     nyquest_preset::register();
