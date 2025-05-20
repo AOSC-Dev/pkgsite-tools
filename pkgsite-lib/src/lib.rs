@@ -181,18 +181,17 @@ impl PackagesSiteClient {
 
 #[cfg(test)]
 mod tests {
-    #[cfg(feature = "nyquest")]
     use super::PackagesSiteClient;
     use crate::error::PResult;
 
     #[tokio::test]
     async fn test_fetch() -> PResult<()> {
         #[cfg(feature = "reqwest")]
-        let client = PackagesSiteClient::default();
+        let client = PackagesSiteClient::default_url()?;
         #[cfg(feature = "nyquest")]
         nyquest_preset::register();
         #[cfg(feature = "nyquest")]
-        let client = PackagesSiteClient::default().await?;
+        let client = PackagesSiteClient::default_url().await?;
 
         dbg!(client.index().await?);
 
