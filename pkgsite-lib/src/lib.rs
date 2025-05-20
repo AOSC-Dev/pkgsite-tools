@@ -1,7 +1,7 @@
 #[cfg(feature = "nyquest")]
 use nyquest::{AsyncClient, ClientBuilder, Request, r#async::Response};
 #[cfg(feature = "reqwest")]
-use reqwest::{Client, Response, StatusCode};
+use reqwest::{Client, Response, StatusCode, redirect::Policy};
 #[cfg(feature = "nyquest")]
 use std::borrow::Cow;
 
@@ -25,31 +25,25 @@ pub struct PackagesSiteClient {
     client: AsyncClient,
 }
 
-#[cfg(feature = "reqwest")]
-impl Default for PackagesSiteClient {
-    fn default() -> Self {
-        Self {
-            url: PACKAGES_SITE_URL.to_owned(),
-            client: Client::new(),
-        }
-    }
-}
-
 impl PackagesSiteClient {
     #[cfg(feature = "reqwest")]
-    pub fn new(url: String) -> Self {
-        Self {
+    pub fn new(url: String) -> PResult<Self> {
+        Ok(Self {
             url,
-            client: Client::new(),
-        }
+            client: Client::builder().redirect(Policy::none()).build()?,
+        })
     }
 
     #[cfg(feature = "reqwest")]
-    pub fn from_env() -> Self {
-        Self::new(
-            std::env::var("PACKAGE_SITE_URL")
-                .expect("PACKAGE_SITE_URL environment variable is not set"),
-        )
+    pub fn default() -> PResult<Self> {
+        Ok(Self::new(PACKAGES_SITE_URL.to_owned())?)
+    }
+
+    #[cfg(feature = "reqwest")]
+    pub fn from_env() -> PResult<Self> {
+        Ok(Self::new(std::env::var("PACKAGE_SITE_URL").expect(
+            "PACKAGE_SITE_URL environment variable is not set",
+        ))?)
     }
 
     #[cfg(feature = "reqwest")]
@@ -143,11 +137,11 @@ impl PackagesSiteClient {
         Ok(res)
     }
 
-    pub async fn search(&self, pattern: &str, noredir: bool) -> PResult<SearchExactMatch> {
+    pub async fn search(&self, pattern: &str, noredir: bool) -> PResult<Result<Search, Info>> {
         let response = self
             .get_data(format!(
-                "{}/search?q={}&type=json&noredir=true",
-                &self.url, pattern,
+                "{}/search?q={}&type=json&noredir={}",
+                &self.url, pattern, noredir
             ))
             .await?;
 
@@ -156,18 +150,8 @@ impl PackagesSiteClient {
         #[cfg(feature = "nyquest")]
         let status = response.status();
         match status {
-            200 => Ok(SearchExactMatch::Search(response.json::<Search>().await?)),
-            303 => {
-                if noredir {
-                    Ok(SearchExactMatch::Search(Search {
-                        packages: Vec::new(),
-                    }))
-                } else {
-                    Ok(SearchExactMatch::Info(Box::new(
-                        self.info(&[pattern]).await?.pop().unwrap(),
-                    )))
-                }
-            }
+            200 => Ok(Ok(response.json::<Search>().await?)),
+            303 => Ok(Err(self.info(&[pattern]).await?.pop().unwrap())),
             #[cfg(feature = "reqwest")]
             code => Err(PackagesSiteError::UnexpectedStatus(
                 StatusCode::from_u16(code).unwrap(),
