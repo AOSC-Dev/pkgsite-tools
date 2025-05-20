@@ -17,12 +17,12 @@ async fn run() -> Result<()> {
     let args = argh::from_env::<Cli>();
 
     #[cfg(feature = "reqwest")]
-    let pkgsite = PackagesSiteClient::default()?;
+    let pkgsite = PackagesSiteClient::default_url()?;
 
     #[cfg(feature = "nyquest")]
     nyquest_preset::register();
     #[cfg(feature = "nyquest")]
-    let pkgsite = PackagesSiteClient::default().await?;
+    let pkgsite = PackagesSiteClient::default_url().await?;
 
     #[cfg(feature = "clap")]
     match args.subcommands {
