@@ -59,7 +59,10 @@ impl PackagesSiteClient {
     pub async fn new(url: String) -> PResult<Self> {
         Ok(Self {
             url,
-            client: ClientBuilder::default().build_async().await?,
+            client: ClientBuilder::default()
+                .no_redirects()
+                .build_async()
+                .await?,
         })
     }
 
@@ -149,7 +152,7 @@ impl PackagesSiteClient {
         #[cfg(feature = "reqwest")]
         let status = response.status().as_u16();
         #[cfg(feature = "nyquest")]
-        let status = response.status();
+        let status = response.status().code();
         match status {
             200 => Ok(Ok(response.json::<Search>().await?)),
             303 => Ok(Err(self.info(&[pattern]).await?.pop().unwrap())),

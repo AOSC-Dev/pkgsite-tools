@@ -86,7 +86,7 @@ pub struct Show {
 pub struct Search {
     #[argh(positional)]
     pub pattern: String,
-    #[argh(switch)]
+    #[argh(switch, short = 's')]
     /// search without redirecting to the exact match
     pub search_only: bool,
 }

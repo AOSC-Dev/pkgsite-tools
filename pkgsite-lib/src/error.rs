@@ -14,9 +14,6 @@ pub enum PackagesSiteError {
     #[cfg(feature = "nyquest")]
     #[error("Unexpected response status code: {0}")]
     UnexpectedStatus(u16),
-    #[cfg(feature = "nyquest")]
-    #[error("Failed to build client: {0}")]
-    BuildClientError(#[from] nyquest::client::BuildClientError),
 }
 
 pub type PResult<T> = Result<T, PackagesSiteError>;
