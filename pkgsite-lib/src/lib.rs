@@ -11,7 +11,7 @@ pub mod models;
 use error::{PResult, PackagesSiteError};
 pub use models::*;
 use models::{
-    depends::Depends, index::Index, info::Info, rdepends::RDepends, search::Search,
+    depends::Depends, files::Files, index::Index, info::Info, rdepends::RDepends, search::Search,
     updates::Updates,
 };
 
@@ -179,6 +179,27 @@ impl PackagesSiteClient {
             .get_data(format!("{}/updates?type=json", &self.url))
             .await?
             .json::<Updates>()
+            .await?)
+    }
+
+    pub async fn files(
+        &self,
+        arch: &str,
+        branch: &str,
+        package: &str,
+        version: &str,
+    ) -> PResult<Files> {
+        Ok(self
+            .get_data(format!(
+                "{}/files/{}/{}/{}/{}?type=json",
+                &self.url,
+                arch.to_string(),
+                branch,
+                package,
+                version
+            ))
+            .await?
+            .json::<Files>()
             .await?)
     }
 }
