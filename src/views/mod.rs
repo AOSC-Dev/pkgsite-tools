@@ -1,4 +1,5 @@
 pub mod depends;
+pub mod files;
 pub mod index;
 pub mod info;
 pub mod rdepends;

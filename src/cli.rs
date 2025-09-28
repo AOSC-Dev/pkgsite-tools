@@ -31,6 +31,13 @@ pub enum Subcommands {
     },
     /// List 100 latest source updates
     Updates,
+    /// List files for a package
+    Files {
+        arch: String,
+        repo: String,
+        package: String,
+        version: String,
+    },
 }
 
 #[cfg(feature = "argh")]
@@ -50,6 +57,7 @@ pub enum Subcommands {
     Show(Show),
     Search(Search),
     Updates(Updates),
+    Files(Files),
 }
 
 #[cfg(feature = "argh")]
@@ -96,3 +104,18 @@ pub struct Search {
 /// List 100 latest source updates
 #[argh(subcommand, name = "updates")]
 pub struct Updates {}
+
+#[cfg(feature = "argh")]
+#[derive(FromArgs, Debug)]
+/// List files for a package
+#[argh(subcommand, name = "files")]
+pub struct Files {
+    #[argh(positional)]
+    pub arch: String,
+    #[argh(positional)]
+    pub repo: String,
+    #[argh(positional)]
+    pub package: String,
+    #[argh(positional)]
+    pub version: String,
+}
