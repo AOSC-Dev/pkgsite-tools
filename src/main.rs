@@ -45,6 +45,14 @@ async fn run() -> Result<()> {
             Subcommands::Updates => {
                 print_res!(single pkgsite, updates, views::updates::UpdatesView);
             }
+            Subcommands::Files {
+                arch,
+                repo,
+                package,
+                version,
+            } => {
+                print_res!(single pkgsite, files, views::files::FilesView, &arch, &repo, &package, &version);
+            }
         },
         None => {
             print_res!(single pkgsite, index, views::index::IndexView);
@@ -71,6 +79,14 @@ async fn run() -> Result<()> {
             }
             Subcommands::Updates(_) => {
                 print_res!(single pkgsite, updates, views::updates::UpdatesView);
+            }
+            Subcommands::Files(Files {
+                arch,
+                repo,
+                package,
+                version,
+            }) => {
+                print_res!(single pkgsite, files, views::files::FilesView, &arch, &repo, &package, &version);
             }
         },
         None => {
