@@ -134,6 +134,7 @@ impl PackagesSiteClient {
                 .await?
                 .json::<Info>()
                 .await
+                .inspect_err(|e| eprintln!("Failed to parse response data to Info: {e}"))
             {
                 res.push(info);
             }
