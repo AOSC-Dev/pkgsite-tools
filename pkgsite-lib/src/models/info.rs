@@ -1,14 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PackageError {
-    pub message: String,
-    pub path: String,
-    pub tree: String,
-    pub branch: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 pub struct DpkgMeta {
     pub hasmeta: bool,
     pub version: String,
@@ -33,7 +25,6 @@ pub struct Info {
     pub description: String,
     pub category: String,
     pub section: String,
-    pub errors: Vec<PackageError>,
     pub srctype: String,
     pub srcurl_base: String,
     pub srcurl: String,

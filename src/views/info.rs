@@ -1,5 +1,5 @@
 use console::style;
-use pkgsite_lib::info::{DpkgMeta, Info, PackageError};
+use pkgsite_lib::info::{DpkgMeta, Info};
 use std::fmt::Display;
 use tabled::{
     builder::Builder,
@@ -7,26 +7,6 @@ use tabled::{
 };
 
 use pkgsite_tools::PADDING;
-
-struct PackageErrorView<'a> {
-    inner: &'a PackageError,
-}
-
-impl<'a> From<&'a PackageError> for PackageErrorView<'a> {
-    fn from(inner: &'a PackageError) -> Self {
-        Self { inner }
-    }
-}
-
-impl Display for PackageErrorView<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "({}:{}) {}: {}",
-            &self.inner.tree, &self.inner.branch, &self.inner.path, &self.inner.message
-        )
-    }
-}
 
 struct DpkgMetaView<'a> {
     inner: &'a DpkgMeta,
@@ -97,7 +77,7 @@ Version: {} ({})
 Description: {}
 Section: {}-{}
 Upstream: {}
-Source: ({}) {}{}
+Source: ({}) {}
 
 Available versions:
 {}
@@ -111,20 +91,6 @@ Available versions:
             &self.inner.srcurl_base,
             &self.inner.srctype,
             &self.inner.srcurl,
-            if self.inner.errors.is_empty() {
-                String::new()
-            } else {
-                format!(
-                    "\nErrors:\n{}",
-                    &self
-                        .inner
-                        .errors
-                        .iter()
-                        .map(|err| PackageErrorView::from(err).to_string())
-                        .collect::<Vec<String>>()
-                        .join("\n")
-                )
-            },
             version_matrix.build().with(table_settings),
             if self.inner.versions.iter().any(|version| version.testing) {
                 format!(
