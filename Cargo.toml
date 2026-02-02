@@ -35,7 +35,7 @@ path = "src/main.rs"
 [features]
 default = ["reqwest", "tokio", "clap"]
 minimal = ["nyquest", "compio", "argh"]
-reqwest = ["pkgsite-lib/reqwest", "tokio"]
+reqwest = ["pkgsite-lib/reqwest", "pkgsite-lib/native-tls", "tokio"]
 nyquest = ["pkgsite-lib/nyquest", "dep:nyquest-preset"]
 clap = ["dep:clap", "dep:clap_complete"]
 argh = ["dep:argh"]

@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-reqwest = { version = "0.13", features = ["json"], optional = true }
+reqwest = { version = "0.13", default-features = false, features = ["http2", "charset", "json", "system-proxy"], optional = true }
 nyquest = { version = "0.4", features = ["json", "async"], optional = true }
 thiserror = "2.0"
 
@@ -14,6 +14,8 @@ nyquest-preset = { version = "0.4", features = ["async"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 
 [features]
-default = ["reqwest"]
+default = ["reqwest", "native-tls"]
 reqwest = ["dep:reqwest"]
 nyquest = ["dep:nyquest"]
+rustls-tls = ["reqwest/rustls"]
+native-tls = ["reqwest/native-tls"]
