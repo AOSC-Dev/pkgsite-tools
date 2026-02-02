@@ -86,6 +86,16 @@ _arguments "${_arguments_options[@]}" : \
 '--help[Print help]' \
 && ret=0
 ;;
+(files)
+_arguments "${_arguments_options[@]}" : \
+'-h[Print help]' \
+'--help[Print help]' \
+':arch:_default' \
+':repo:_default' \
+':package:_default' \
+':version:_default' \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" : \
 ":: :_pkgsite__help_commands" \
@@ -118,6 +128,10 @@ _arguments "${_arguments_options[@]}" : \
 _arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
+(files)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" : \
 && ret=0
@@ -142,6 +156,7 @@ _pkgsite_commands() {
 'info:Get package information' \
 'search:Search for packages' \
 'updates:List 100 latest source updates' \
+'files:List files for a package' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'pkgsite commands' commands "$@"
@@ -151,6 +166,11 @@ _pkgsite__depends_commands() {
     local commands; commands=()
     _describe -t commands 'pkgsite depends commands' commands "$@"
 }
+(( $+functions[_pkgsite__files_commands] )) ||
+_pkgsite__files_commands() {
+    local commands; commands=()
+    _describe -t commands 'pkgsite files commands' commands "$@"
+}
 (( $+functions[_pkgsite__help_commands] )) ||
 _pkgsite__help_commands() {
     local commands; commands=(
@@ -159,6 +179,7 @@ _pkgsite__help_commands() {
 'show:Get package information' \
 'search:Search for packages' \
 'updates:List 100 latest source updates' \
+'files:List files for a package' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'pkgsite help commands' commands "$@"
@@ -167,6 +188,11 @@ _pkgsite__help_commands() {
 _pkgsite__help__depends_commands() {
     local commands; commands=()
     _describe -t commands 'pkgsite help depends commands' commands "$@"
+}
+(( $+functions[_pkgsite__help__files_commands] )) ||
+_pkgsite__help__files_commands() {
+    local commands; commands=()
+    _describe -t commands 'pkgsite help files commands' commands "$@"
 }
 (( $+functions[_pkgsite__help__help_commands] )) ||
 _pkgsite__help__help_commands() {

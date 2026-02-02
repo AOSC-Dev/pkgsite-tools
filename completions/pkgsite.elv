@@ -30,6 +30,7 @@ set edit:completion:arg-completer[pkgsite] = {|@words|
             cand info 'Get package information'
             cand search 'Search for packages'
             cand updates 'List 100 latest source updates'
+            cand files 'List files for a package'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'pkgsite;depends'= {
@@ -67,12 +68,17 @@ set edit:completion:arg-completer[pkgsite] = {|@words|
             cand -h 'Print help'
             cand --help 'Print help'
         }
+        &'pkgsite;files'= {
+            cand -h 'Print help'
+            cand --help 'Print help'
+        }
         &'pkgsite;help'= {
             cand depends 'Query dependencies of packages'
             cand rdepends 'Query reverse dependencies of packages'
             cand show 'Get package information'
             cand search 'Search for packages'
             cand updates 'List 100 latest source updates'
+            cand files 'List files for a package'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'pkgsite;help;depends'= {
@@ -84,6 +90,8 @@ set edit:completion:arg-completer[pkgsite] = {|@words|
         &'pkgsite;help;search'= {
         }
         &'pkgsite;help;updates'= {
+        }
+        &'pkgsite;help;files'= {
         }
         &'pkgsite;help;help'= {
         }

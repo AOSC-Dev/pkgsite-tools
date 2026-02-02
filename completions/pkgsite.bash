@@ -1,12 +1,16 @@
 _pkgsite() {
     local i cur prev opts cmd
     COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [[ "${BASH_VERSINFO[0]}" -ge 4 ]]; then
+        cur="$2"
+    else
+        cur="${COMP_WORDS[COMP_CWORD]}"
+    fi
+    prev="$3"
     cmd=""
     opts=""
 
-    for i in ${COMP_WORDS[@]}
+    for i in "${COMP_WORDS[@]:0:COMP_CWORD}"
     do
         case "${cmd},${i}" in
             ",$1")
@@ -17,6 +21,9 @@ _pkgsite() {
                 ;;
             pkgsite,depends)
                 cmd="pkgsite__depends"
+                ;;
+            pkgsite,files)
+                cmd="pkgsite__files"
                 ;;
             pkgsite,help)
                 cmd="pkgsite__help"
@@ -42,6 +49,9 @@ _pkgsite() {
             pkgsite__help,depends)
                 cmd="pkgsite__help__depends"
                 ;;
+            pkgsite__help,files)
+                cmd="pkgsite__help__files"
+                ;;
             pkgsite__help,help)
                 cmd="pkgsite__help__help"
                 ;;
@@ -64,7 +74,7 @@ _pkgsite() {
 
     case "${cmd}" in
         pkgsite)
-            opts="-h -V --help --version depends dep rdepends rdep show info search updates help"
+            opts="-h -V --help --version depends dep rdepends rdep show info search updates files help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -91,8 +101,22 @@ _pkgsite() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        pkgsite__files)
+            opts="-h --help <ARCH> <REPO> <PACKAGE> <VERSION>"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         pkgsite__help)
-            opts="depends rdepends show search updates help"
+            opts="depends rdepends show search updates files help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -106,6 +130,20 @@ _pkgsite() {
             return 0
             ;;
         pkgsite__help__depends)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        pkgsite__help__files)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
