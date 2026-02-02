@@ -184,7 +184,7 @@ impl PackagesSiteClient {
         package: &str,
         version: &str,
     ) -> PResult<Files> {
-        Ok(self
+        let response = self
             .get_data(format!(
                 "{}/files/{}/{}/{}/{}?type=json",
                 &self.url,
@@ -193,9 +193,21 @@ impl PackagesSiteClient {
                 package,
                 version
             ))
-            .await?
-            .json::<Files>()
-            .await?)
+            .await?;
+        #[cfg(feature = "reqwest")]
+        let status = response.status().as_u16();
+        #[cfg(feature = "nyquest")]
+        let status = response.status().code();
+        if status != 200 {
+            #[cfg(feature = "reqwest")]
+            return Err(PackagesSiteError::UnexpectedStatus(
+                StatusCode::from_u16(status).unwrap(),
+            ));
+            #[cfg(feature = "nyquest")]
+            return Err(PackagesSiteError::UnexpectedStatus(status));
+        } else {
+            Ok(response.json::<Files>().await?)
+        }
     }
 }
 
