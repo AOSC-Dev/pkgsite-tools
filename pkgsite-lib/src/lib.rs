@@ -149,9 +149,9 @@ impl PackagesSiteClient {
         let status = response.status().code();
         match status {
             200 => Ok(SearchOrInfo::Search(response.json::<Search>().await?)),
-            303 => Ok(SearchOrInfo::Info(
+            303 => Ok(SearchOrInfo::Info(Box::new(
                 self.info(&[pattern]).await?.pop().unwrap(),
-            )),
+            ))),
             #[cfg(feature = "reqwest")]
             code => Err(PackagesSiteError::UnexpectedStatus(
                 StatusCode::from_u16(code).unwrap(),
@@ -187,11 +187,7 @@ impl PackagesSiteClient {
         let response = self
             .get_data(format!(
                 "{}/files/{}/{}/{}/{}?type=json",
-                &self.url,
-                arch.to_string(),
-                branch,
-                package,
-                version
+                &self.url, arch, branch, package, version
             ))
             .await?;
         #[cfg(feature = "reqwest")]

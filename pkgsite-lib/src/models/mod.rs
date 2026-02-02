@@ -8,5 +8,5 @@ pub mod updates;
 
 pub enum SearchOrInfo {
     Search(search::Search),
-    Info(info::Info),
+    Info(Box<info::Info>),
 }
