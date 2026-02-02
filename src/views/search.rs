@@ -1,5 +1,5 @@
 use console::style;
-use pkgsite_lib::{info::Info, search::Package, search::Search};
+use pkgsite_lib::{SearchOrInfo, info::Info, search::Package};
 use regex::{Captures, Regex};
 use std::fmt::Display;
 use tabled::{
@@ -11,11 +11,11 @@ use super::info::InfoView;
 use pkgsite_tools::PADDING;
 
 pub struct SearchView<'a> {
-    pub inner: &'a Result<Search, Info>,
+    pub inner: &'a SearchOrInfo,
 }
 
-impl<'a> From<&'a Result<Search, Info>> for SearchView<'a> {
-    fn from(inner: &'a Result<Search, Info>) -> Self {
+impl<'a> From<&'a SearchOrInfo> for SearchView<'a> {
+    fn from(inner: &'a SearchOrInfo) -> Self {
         Self { inner }
     }
 }
@@ -23,7 +23,7 @@ impl<'a> From<&'a Result<Search, Info>> for SearchView<'a> {
 impl Display for SearchView<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.inner {
-            Ok(search) => {
+            SearchOrInfo::Search(search) => {
                 let highlight_regex = Regex::new(r"<b>(?<highlight>.+?)<\/b>").unwrap();
                 let highlight_rep = |caps: &Captures| -> String {
                     style(&caps["highlight"]).bold().underlined().to_string()
@@ -62,7 +62,7 @@ impl Display for SearchView<'_> {
 
                 write!(f, "{}", packages_table.build().with(table_settings))
             }
-            Err(info) => {
+            SearchOrInfo::Info(info) => {
                 write!(
                     f,
                     "Found an exact match:\n(append --search-only to search the keyword instead)\n\n{}",

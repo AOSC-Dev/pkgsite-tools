@@ -5,3 +5,8 @@ pub mod info;
 pub mod rdepends;
 pub mod search;
 pub mod updates;
+
+pub enum SearchOrInfo {
+    Search(search::Search),
+    Info(info::Info),
+}

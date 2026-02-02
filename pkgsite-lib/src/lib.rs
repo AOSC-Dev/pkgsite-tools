@@ -142,7 +142,7 @@ impl PackagesSiteClient {
         Ok(res)
     }
 
-    pub async fn search(&self, pattern: &str, noredir: bool) -> PResult<Result<Search, Info>> {
+    pub async fn search(&self, pattern: &str, noredir: bool) -> PResult<SearchOrInfo> {
         let response = self
             .get_data(format!(
                 "{}/search?q={}&type=json&noredir={}",
@@ -155,8 +155,10 @@ impl PackagesSiteClient {
         #[cfg(feature = "nyquest")]
         let status = response.status().code();
         match status {
-            200 => Ok(Ok(response.json::<Search>().await?)),
-            303 => Ok(Err(self.info(&[pattern]).await?.pop().unwrap())),
+            200 => Ok(SearchOrInfo::Search(response.json::<Search>().await?)),
+            303 => Ok(SearchOrInfo::Info(
+                self.info(&[pattern]).await?.pop().unwrap(),
+            )),
             #[cfg(feature = "reqwest")]
             code => Err(PackagesSiteError::UnexpectedStatus(
                 StatusCode::from_u16(code).unwrap(),
