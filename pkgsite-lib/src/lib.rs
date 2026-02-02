@@ -41,10 +41,7 @@ impl PackagesSiteClient {
 
     #[cfg(feature = "reqwest")]
     pub fn from_env() -> PResult<Self> {
-        Self::new(
-            std::env::var("PACKAGE_SITE_URL")
-                .expect("PACKAGE_SITE_URL environment variable is not set"),
-        )
+        Self::new(std::env::var("PACKAGE_SITE_URL")?)
     }
 
     #[cfg(feature = "reqwest")]
@@ -73,11 +70,7 @@ impl PackagesSiteClient {
 
     #[cfg(feature = "nyquest")]
     pub async fn from_env() -> PResult<Self> {
-        Ok(Self::new(
-            std::env::var("PACKAGE_SITE_URL")
-                .expect("PACKAGE_SITE_URL environment variable is not set"),
-        )
-        .await?)
+        Ok(Self::new(std::env::var("PACKAGE_SITE_URL")?).await?)
     }
 
     #[cfg(feature = "nyquest")]

@@ -14,6 +14,8 @@ pub enum PackagesSiteError {
     #[cfg(feature = "nyquest")]
     #[error("Unexpected response status code: {0}")]
     UnexpectedStatus(u16),
+    #[error("PACKAGE_SITE_URL environment variable is not set")]
+    EnvNotPresent(#[from] std::env::VarError),
 }
 
 pub type PResult<T> = Result<T, PackagesSiteError>;
