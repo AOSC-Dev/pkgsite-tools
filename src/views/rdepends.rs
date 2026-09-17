@@ -16,12 +16,12 @@ impl Display for RevDependencyView<'_> {
         write!(
             f,
             "{}{}{}",
-            &self.inner.package,
-            &self.inner.version,
+            self.inner.package,
+            self.inner.version,
             if self.inner.architecture.is_empty() {
                 String::new()
             } else {
-                format!(" [{}]", &self.inner.architecture)
+                format!(" [{}]", self.inner.architecture)
             }
         )
     }
@@ -42,8 +42,8 @@ impl Display for RevDependencyGroupView<'_> {
         write!(
             f,
             "{}: {}",
-            &self.inner.description,
-            &self
+            self.inner.description,
+            self
                 .inner
                 .deps
                 .iter()
@@ -84,7 +84,7 @@ impl Display for RDependsView<'_> {
             } else {
                 format!(
                     "\n\nLibrary depended by:\n{}",
-                    &self
+                    self
                         .inner
                         .sobreaks
                         .iter()
@@ -98,7 +98,7 @@ impl Display for RDependsView<'_> {
             } else {
                 format!(
                     "\n- (Circular dependencies) {}",
-                    &self.inner.sobreaks_circular.join(", ")
+                    self.inner.sobreaks_circular.join(", ")
                 )
             },
             if self.inner.sorevdeps.is_empty() {
@@ -106,7 +106,7 @@ impl Display for RDependsView<'_> {
             } else {
                 format!(
                     "\n\nReverse dependencies of the libraries:\n{}",
-                    &self
+                    self
                         .inner
                         .sorevdeps
                         .iter()

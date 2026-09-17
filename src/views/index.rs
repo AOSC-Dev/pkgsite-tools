@@ -89,7 +89,7 @@ NOTE:
 
 Repositories:
 {}",
-            &self.inner.total,
+            self.inner.total,
             updates_table.build().with(updates_table_settings),
             style("Up to Date").green(),
             style("In Testing Branch").blue(),

@@ -82,15 +82,15 @@ Source: ({}) {}
 Available versions:
 {}
 {}",
-            &self.inner.name,
-            &self.inner.full_version,
-            &self.inner.version,
-            &self.inner.description,
-            &self.inner.category,
-            &self.inner.section,
-            &self.inner.srcurl_base,
-            &self.inner.srctype,
-            &self.inner.srcurl,
+            self.inner.name,
+            self.inner.full_version,
+            self.inner.version,
+            self.inner.description,
+            self.inner.category,
+            self.inner.section,
+            self.inner.srcurl_base,
+            self.inner.srctype,
+            self.inner.srcurl,
             version_matrix.build().with(table_settings),
             if self.inner.versions.iter().any(|version| version.testing) {
                 format!(

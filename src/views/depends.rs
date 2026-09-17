@@ -16,13 +16,13 @@ impl Display for DependencyView<'_> {
         write!(
             f,
             "{}{}: {}",
-            &self.inner.relationship,
+            self.inner.relationship,
             if self.inner.arch.is_empty() {
                 String::new()
             } else {
-                format!(" {}", &self.inner.arch)
+                format!(" {}", self.inner.arch)
             },
-            &self
+            self
                 .inner
                 .packages
                 .iter()
@@ -49,14 +49,14 @@ impl Display for DependsView<'_> {
             f,
             "{}
 Library Dependencies: {}",
-            &self
+            self
                 .inner
                 .dependencies
                 .iter()
                 .map(|dep| DependencyView::from(dep).to_string())
                 .collect::<Vec<String>>()
                 .join("\n"),
-            &self.inner.library_dependencies.join(", ")
+            self.inner.library_dependencies.join(", ")
         )
     }
 }

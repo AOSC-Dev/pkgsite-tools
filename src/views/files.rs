@@ -68,24 +68,24 @@ Maintainer: {}{}{}
 
 Files:
 {}",
-            &self.inner.pkg.package,
-            &self.inner.pkg.version,
-            &self.inner.pkg.architecture,
-            &self.inner.pkg.repo,
-            &self.inner.pkg_debtime,
-            &self.inner.pkg.size,
-            &self.inner.pkg.sha256,
-            &self.inner.pkg.installed_size,
-            &self.inner.pkg.maintainer,
+            self.inner.pkg.package,
+            self.inner.pkg.version,
+            self.inner.pkg.architecture,
+            self.inner.pkg.repo,
+            self.inner.pkg_debtime,
+            self.inner.pkg.size,
+            self.inner.pkg.sha256,
+            self.inner.pkg.installed_size,
+            self.inner.pkg.maintainer,
             if self.inner.sodepends.is_empty() {
                 String::new()
             } else {
-                format!("\nLibrary Depends: {}", &self.inner.sodepends.join(", "))
+                format!("\nLibrary Depends: {}", self.inner.sodepends.join(", "))
             },
             if self.inner.soprovides.is_empty() {
                 String::new()
             } else {
-                format!("\nLibrary Provides: {}", &self.inner.soprovides.join(", "))
+                format!("\nLibrary Provides: {}", self.inner.soprovides.join(", "))
             },
             file_matrix.build().with(table_settings),
         )
