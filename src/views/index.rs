@@ -55,7 +55,10 @@ impl Display for IndexView<'_> {
                 &UtcDateTime::from_unix_timestamp(repository.date.into())
                     .unwrap_or(UtcDateTime::UNIX_EPOCH)
                     .format(
-                        &format_description::parse("[year]-[month]-[day] [hour]:[minute]").unwrap(),
+                        &format_description::parse_borrowed::<3>(
+                            "[year]-[month]-[day] [hour]:[minute]",
+                        )
+                        .unwrap(),
                     )
                     .unwrap_or(repository.date.to_string()),
             ]);

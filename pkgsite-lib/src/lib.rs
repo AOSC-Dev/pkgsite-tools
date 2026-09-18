@@ -65,12 +65,12 @@ impl PackagesSiteClient {
 
     #[cfg(feature = "nyquest")]
     pub async fn default_url() -> PResult<Self> {
-        Ok(Self::new(PACKAGES_SITE_URL.to_owned()).await?)
+        Self::new(PACKAGES_SITE_URL.to_owned()).await
     }
 
     #[cfg(feature = "nyquest")]
     pub async fn from_env() -> PResult<Self> {
-        Ok(Self::new(std::env::var("PACKAGE_SITE_URL")?).await?)
+        Self::new(std::env::var("PACKAGE_SITE_URL")?).await
     }
 
     #[cfg(feature = "nyquest")]
@@ -85,7 +85,7 @@ impl PackagesSiteClient {
         let mut res = Vec::new();
         for package in packages {
             if let Ok(dep) = self
-                .get_data(format!("{}/packages/{}?type=json", &self.url, package))
+                .get_data(format!("{}/packages/{}?type=json", self.url, package))
                 .await?
                 .json::<Depends>()
                 .await
@@ -100,7 +100,7 @@ impl PackagesSiteClient {
         let mut res = Vec::new();
         for package in packages.iter() {
             if let Ok(revdep) = self
-                .get_data(format!("{}/revdep/{}?type=json", &self.url, package))
+                .get_data(format!("{}/revdep/{}?type=json", self.url, package))
                 .await?
                 .json::<RDepends>()
                 .await
@@ -121,7 +121,7 @@ impl PackagesSiteClient {
             if let Ok(info) = self
                 .get_data(format!(
                     "{}/packages/{}?type=json",
-                    &self.url,
+                    self.url,
                     package.as_ref()
                 ))
                 .await?
@@ -139,7 +139,7 @@ impl PackagesSiteClient {
         let response = self
             .get_data(format!(
                 "{}/search?q={}&type=json&noredir={}",
-                &self.url, pattern, noredir
+                self.url, pattern, noredir
             ))
             .await?;
 
@@ -163,7 +163,7 @@ impl PackagesSiteClient {
 
     pub async fn index(&self) -> PResult<Index> {
         Ok(self
-            .get_data(format!("{}/?type=json", &self.url))
+            .get_data(format!("{}/?type=json", self.url))
             .await?
             .json::<Index>()
             .await?)
@@ -171,7 +171,7 @@ impl PackagesSiteClient {
 
     pub async fn updates(&self) -> PResult<Updates> {
         Ok(self
-            .get_data(format!("{}/updates?type=json", &self.url))
+            .get_data(format!("{}/updates?type=json", self.url))
             .await?
             .json::<Updates>()
             .await?)
@@ -187,7 +187,7 @@ impl PackagesSiteClient {
         let response = self
             .get_data(format!(
                 "{}/files/{}/{}/{}/{}?type=json",
-                &self.url, arch, branch, package, version
+                self.url, arch, branch, package, version
             ))
             .await?;
         #[cfg(feature = "reqwest")]
